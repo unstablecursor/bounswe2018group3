@@ -22,10 +22,10 @@ consumer_secret = "" # API secret
 #Function for searching tweets.
 #Author: Recep Deniz Aksoy
 def search_tweet(word):
-    
+
 
     #Getting auth using consumer_token and consumer_secret as auth variable.
-    auth = OAuthHandler(consumer_key, consumer_secret) 
+    auth = OAuthHandler(consumer_key, consumer_secret)
     api = tp.API(auth)
     #Using tp.Cursor function get 10 tweets which have bogazici in it.
     data = tp.Cursor(api.search, q= word, languages = 'tr', tweet_mode = 'extended').items(10)
@@ -42,10 +42,10 @@ def search_tweet(word):
 def trending_topics(wloc = 1):
 
     #Getting auth using consumer_token and consumer_secret as auth variable.
-    auth = OAuthHandler(consumer_key, consumer_secret) 
+    auth = OAuthHandler(consumer_key, consumer_secret)
     api = tp.API(auth)
 
-    #Get trending topics for the given location (default value is worldwide, 1) 
+    #Get trending topics for the given location (default value is worldwide, 1)
     trends = api.trends_place(wloc)
     #Printing the names of the topics
     raw_table = []
@@ -72,7 +72,7 @@ def get_followers(word):
 #Author: Oğuzhan Yetimoğlu
 
 def get_friends(word):
-    
+
     auth = OAuthHandler(consumer_key, consumer_secret)
     api = tp.API(auth)
     raw_table = []
@@ -107,10 +107,11 @@ def two_sided_following(user):
     user_friends_list = get_friends(user)
     for friend in user_friends_list:
         is_following = api.exists_friendship(friend, user)
-        two_sided_friendship.append(friend.screen_name)
+        if is_following :
+            two_sided_friendship.append(friend.screen_name)
     table = pd.DataFrame.from_dict(two_sided_friendship)
     return table
-    
+
 class TemplateRendering:
     def render_template(self, template_name, variables={}):
         dir_path = os.path.dirname(os.path.realpath(__file__))
@@ -156,7 +157,7 @@ class resultHandler(tornado.web.RequestHandler, TemplateRendering):
             self.write(self.render_template('result.html', variables = {'result' : table.to_html(index = False)}))
 
 
- 
+
 class IndexPageHandler(tornado.web.RequestHandler, TemplateRendering):
     def get(self):
 
@@ -174,29 +175,16 @@ class Application(tornado.web.Application):
 #            (r'/logs/(.*)',logsHandler),
 #	    (r'/reports/(.*)',tornado.web.StaticFileHandler,{'path':"./reports/"})
         ]
- 
+
         settings = {
             'template_path': 'templates',
             'static_path': 'static'
         }
         tornado.web.Application.__init__(self, handlers, **settings)
- 
+
 if __name__ == '__main__':
     pd.set_option('display.max_colwidth', -1)
     ws_app = Application()
     server = tornado.httpserver.HTTPServer(ws_app)
     server.listen(9090)
     tornado.ioloop.IOLoop.instance().start()
-
-
-
-
-
-
-
-
-
-
-
-
-
