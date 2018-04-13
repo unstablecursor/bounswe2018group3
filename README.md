@@ -6,6 +6,8 @@ Welcome to our repository. We are studying on Cultural Activities Project.
 
 Ni! Ni! Ni!
 
+## Our Simple Twitter API
+You can find the link [here](http://206.189.0.140:9090/)
 ## Installing dependencies for server
 `pip3 install pipenv`
 
